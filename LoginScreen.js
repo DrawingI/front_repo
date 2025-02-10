@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import tw from 'tailwind-react-native-classnames';
 
 const LoginScreen = () => {
-  console.log("LoginScreen이 렌더링되었습니다!");
+  const navigation = useNavigation();
 
   return (
     <View style={tw`flex-1 bg-white items-center justify-center px-6`}>
@@ -37,7 +38,7 @@ const LoginScreen = () => {
 
       {/* 하단 링크 */}
       <View style={tw`flex-row mb-6`}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
           <Text style={tw`text-black font-bold mr-6`}>회원 가입</Text>
         </TouchableOpacity>
         <TouchableOpacity>
