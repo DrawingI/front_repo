@@ -1,6 +1,10 @@
 import React from 'react';
+<<<<<<< Updated upstream
 import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+=======
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+>>>>>>> Stashed changes
 import tw from 'tailwind-react-native-classnames';
 
 const LoginScreen = () => {
@@ -12,9 +16,8 @@ const LoginScreen = () => {
       <Text style={tw`text-4xl font-bold text-orange-500 mb-2`}>Drawing i</Text>
       <Text style={tw`text-lg text-gray-500 mb-10`}>아이의 마음을 이해하는 창</Text>
 
-      {/* Google 로그인 버튼 */}
-      <TouchableOpacity style={tw`flex-row border border-gray-300 rounded-lg w-full py-4 px-4 items-center mb-4`}>
-        <Image source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg' }} style={tw`w-6 h-6 mr-3`} />
+      {/* Google 로그인 버튼 (이미지 제거) */}
+      <TouchableOpacity style={tw`border border-gray-300 rounded-lg w-full py-4 px-4 items-center mb-4`}>
         <Text style={tw`text-lg text-black`}>Google로 시작하기</Text>
       </TouchableOpacity>
 
@@ -37,8 +40,13 @@ const LoginScreen = () => {
       </TouchableOpacity>
 
       {/* 하단 링크 */}
+<<<<<<< Updated upstream
       <View style={tw`flex-row mb-6`}>
         <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+=======
+      <View style={tw`flex-row mb-4`}>
+        <TouchableOpacity>
+>>>>>>> Stashed changes
           <Text style={tw`text-black font-bold mr-6`}>회원 가입</Text>
         </TouchableOpacity>
         <TouchableOpacity>
@@ -48,6 +56,11 @@ const LoginScreen = () => {
           <Text style={tw`text-gray-500`}>비밀번호 찾기</Text>
         </TouchableOpacity>
       </View>
+
+      {/* 비회원 로그인 추가 */}
+      <TouchableOpacity>
+        <Text style={tw`text-gray-500 underline`}>비회원으로 로그인</Text>
+      </TouchableOpacity>
     </View>
   );
 };

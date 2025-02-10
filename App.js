@@ -1,4 +1,5 @@
 import React from 'react';
+<<<<<<< Updated upstream
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './LoginScreen';
@@ -16,5 +17,15 @@ export default function App() {
         <Stack.Screen name="ChildManagement" component={ChildManagementScreen} />
       </Stack.Navigator>
     </NavigationContainer>
+=======
+import { SafeAreaView } from 'react-native';
+import LoginScreen from './LoginScreen'; // LoginScreen 가져오기
+
+export default function App() {
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <LoginScreen />
+    </SafeAreaView>
+>>>>>>> Stashed changes
   );
 }
