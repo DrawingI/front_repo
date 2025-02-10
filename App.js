@@ -1,33 +1,20 @@
 import React from 'react';
-import { SafeAreaView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
-
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './LoginScreen';
+import SignUpScreen from './SignUpScreen';
 import ChildManagementScreen from './ChildManagementScreen';
 
-const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Tab.Navigator screenOptions={{ headerShown: false }}>
-        <Tab.Screen
-          name="아이 관리"
-          component={ChildManagementScreen}
-          options={{
-            tabBarIcon: ({ color, size }) => <Ionicons name="happy-outline" size={size} color={color} />,
-          }}
-        />
-        <Tab.Screen
-          name="로그인"
-          component={LoginScreen}
-          options={{
-            tabBarIcon: ({ color, size }) => <Ionicons name="log-in-outline" size={size} color={color} />,
-          }}
-        />
-      </Tab.Navigator>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="SignUp" component={SignUpScreen} />
+        <Stack.Screen name="ChildManagement" component={ChildManagementScreen} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }
