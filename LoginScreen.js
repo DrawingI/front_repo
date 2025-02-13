@@ -9,7 +9,9 @@ const LoginScreen = () => {
   return (
     <View style={tw`flex-1 bg-white items-center justify-center px-6`}>
       {/* 앱 제목 */}
-      <Text style={tw`text-4xl font-bold text-orange-500 mb-2`}>Drawing i</Text>
+      <Text style={[tw`text-4xl font-bold mb-2`, { color: "#F97316" }]}>
+        Drawing i
+      </Text>
       <Text style={tw`text-lg text-gray-500 mb-10`}>아이의 마음을 이해하는 창</Text>
 
       {/* Google 로그인 버튼 */}
