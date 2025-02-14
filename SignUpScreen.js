@@ -56,8 +56,7 @@ const SignUpScreen = ({ navigation }) => {
       return;
     }
 
-    // 모든 조건이 충족되면 다음 화면으로 이동
-    navigation.navigate('ChildManagement');
+    navigation.navigate('ChildList');
   };
 
   // 버튼 활성화 여부
