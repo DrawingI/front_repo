@@ -1,10 +1,44 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import tw from 'tailwind-react-native-classnames';
 
+// 🔹 백엔드 서버 주소 (PC의 로컬 IP 사용)
+const LOCAL_SERVER_URL = 'http://172.30.1.94:5000';
+
 const LoginScreen = () => {
   const navigation = useNavigation();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  // 🔹 로그인 버튼 클릭 시 API 요청
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('입력 오류', '이메일과 비밀번호를 입력해주세요.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${LOCAL_SERVER_URL}/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert('로그인 성공!', '로그인 되었습니다');
+        navigation.navigate('ChildListScreen'); // 🔹 로그인 성공 시 페이지 이동
+      } else {
+        Alert.alert('로그인 실패', data.message || '이메일 또는 비밀번호가 일치하지 않습니다.');
+      }
+    } catch (error) {
+      Alert.alert('서버 오류', '서버에 연결할 수 없습니다.');
+    }
+  };
 
   return (
     <View style={tw`flex-1 bg-white items-center justify-center px-6`}>
@@ -28,13 +62,25 @@ const LoginScreen = () => {
       </View>
 
       {/* 이메일 입력 */}
-      <TextInput style={tw`w-full p-4 text-lg bg-gray-100 rounded-lg mb-3`} placeholder="이메일을 입력해주세요" />
+      <TextInput
+        style={tw`w-full p-4 text-lg bg-gray-100 rounded-lg mb-3`}
+        placeholder="이메일을 입력해주세요"
+        keyboardType="email-address"
+        value={email}
+        onChangeText={setEmail}
+      />
 
       {/* 비밀번호 입력 */}
-      <TextInput style={tw`w-full p-4 text-lg bg-gray-100 rounded-lg mb-6`} placeholder="비밀번호를 입력해주세요" secureTextEntry />
+      <TextInput
+        style={tw`w-full p-4 text-lg bg-gray-100 rounded-lg mb-6`}
+        placeholder="비밀번호를 입력해주세요"
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+      />
 
       {/* 로그인 버튼 */}
-      <TouchableOpacity style={tw`bg-black w-full py-4 rounded-lg mb-4`}>
+      <TouchableOpacity style={tw`bg-black w-full py-4 rounded-lg mb-4`} onPress={handleLogin}>
         <Text style={tw`text-white text-lg font-bold text-center`}>로그인</Text>
       </TouchableOpacity>
 
