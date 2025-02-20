@@ -13,6 +13,9 @@ import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import tw from "tailwind-react-native-classnames";
 
+// 🔹 백엔드 서버 주소 (PC의 로컬 IP 사용)
+const LOCAL_SERVER_URL = "http://172.30.1.94:5000";
+
 const ChildRegisterScreen = ({ navigation }) => {
   const [name, setName] = useState("");
   const [birthdate, setBirthdate] = useState("");
@@ -43,7 +46,7 @@ const ChildRegisterScreen = ({ navigation }) => {
     return month >= 1 && month <= 12 && day >= 1 && day <= 31;
   };
 
-  // 등록 버튼 핸들러
+  // 🔹 API 연동: 아이 등록 함수
   const handleRegister = async () => {
     if (!name || !birthdate || !selectedGender) {
       Alert.alert("경고", "모든 정보를 입력해주세요.");
@@ -58,21 +61,28 @@ const ChildRegisterScreen = ({ navigation }) => {
     const newChild = { name, birthdate, gender: selectedGender, relationship, image };
 
     try {
-      // 기존 아이 목록 불러오기
-      const storedChildren = await AsyncStorage.getItem("children");
-      const childrenList = storedChildren ? JSON.parse(storedChildren) : [];
+      console.log("🔹 서버로 아이 정보 전송 중...");
 
-      // 기존 목록에 새 아이 추가
-      const updatedChildren = [...childrenList, newChild];
+      const response = await fetch(`${LOCAL_SERVER_URL}/register-child`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newChild),
+      });
 
-      // AsyncStorage에 업데이트된 목록 저장
-      await AsyncStorage.setItem("children", JSON.stringify(updatedChildren));
+      const data = await response.json();
+      console.log("🔹 서버 응답:", data);
 
-      // ChildListScreen으로 이동하면서 최신 데이터 전달
-      navigation.navigate("ChildList", { updatedChildren });
-
+      if (response.ok) {
+        Alert.alert("등록 성공!", "아이 정보가 성공적으로 등록되었습니다.");
+        navigation.navigate("ChildList", { updatedChildren: data.children }); // 🔹 등록 후 ChildList로 이동
+      } else {
+        Alert.alert("등록 실패", data.message || "아이 등록 중 오류가 발생했습니다.");
+      }
     } catch (error) {
-      console.error("아이 저장 중 오류 발생:", error);
+      console.error("❌ 서버 요청 중 오류 발생:", error);
+      Alert.alert("서버 오류", "서버에 연결할 수 없습니다.");
     }
   };
 
