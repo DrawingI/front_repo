@@ -11,10 +11,14 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Alert,
+  Image,
 } from 'react-native';
 import tw from 'tailwind-react-native-classnames';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+
+// 🔹 로컬 네트워크 서버 주소
+const LOCAL_SERVER_URL = 'http://172.30.1.94:5000'; // ← 확인한 IP 주소 사용
 
 const SignUpScreen = ({ navigation }) => {
   const [isParent, setIsParent] = useState(true);
@@ -24,7 +28,7 @@ const SignUpScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  // 갤러리에서 이미지 선택
+  // 🔹 갤러리에서 이미지 선택
   const handleSelectImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
@@ -44,8 +48,8 @@ const SignUpScreen = ({ navigation }) => {
     }
   };
 
-  // 계정 만들기 버튼 클릭 핸들러
-  const handleSignUp = () => {
+  // 🔹 계정 만들기 버튼 클릭 시 API 요청
+  const handleSignUp = async () => {
     if (!nickname || !email || !password || !confirmPassword) {
       Alert.alert('경고', '모든 정보를 입력해주세요.');
       return;
@@ -56,11 +60,32 @@ const SignUpScreen = ({ navigation }) => {
       return;
     }
 
-    navigation.navigate('ChildList');
-  };
+    try {
+      const response = await fetch(`${LOCAL_SERVER_URL}/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nickname,
+          email,
+          password,
+          role: isParent ? 'parent' : 'teacher',
+        }),
+      });
 
-  // 버튼 활성화 여부
-  const isFormComplete = nickname && email && password && confirmPassword;
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert('회원가입 성공!', '이제 로그인해주세요.');
+        navigation.navigate('ChildList'); // 🔹 회원가입 성공 후 이동
+      } else {
+        Alert.alert('회원가입 실패', data.message || '다시 시도해주세요.');
+      }
+    } catch (error) {
+      Alert.alert('오류 발생', '서버에 연결할 수 없습니다.');
+    }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -141,12 +166,12 @@ const SignUpScreen = ({ navigation }) => {
               </TouchableOpacity>
             </View>
 
-            {/* Input Fields with Labels */}
+            {/* Input Fields */}
             <View style={tw`mb-4`}>
               <Text style={tw`text-black font-bold mb-1`}>닉네임</Text>
               <TextInput
                 style={tw`w-full p-4 text-lg bg-gray-100 rounded-lg`}
-                placeholder="(3-15자 영문/숫자 조합)"
+                placeholder="닉네임을 입력해주세요"
                 value={nickname}
                 onChangeText={setNickname}
               />
@@ -189,10 +214,10 @@ const SignUpScreen = ({ navigation }) => {
             <TouchableOpacity
               style={[
                 tw`w-full py-4 rounded-lg`,
-                isFormComplete ? { backgroundColor: '#F97316' } : tw`bg-gray-300`,
+                nickname && email && password && confirmPassword ? { backgroundColor: '#F97316' } : tw`bg-gray-300`,
               ]}
               onPress={handleSignUp}
-              disabled={!isFormComplete}
+              disabled={!nickname || !email || !password || !confirmPassword}
             >
               <Text style={tw`text-center text-lg text-white`}>계정 만들기</Text>
             </TouchableOpacity>
