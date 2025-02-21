@@ -44,10 +44,20 @@ const SignUpScreen = ({ navigation }) => {
     }
   };
 
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   // 계정 만들기 버튼 클릭 핸들러
   const handleSignUp = () => {
     if (!nickname || !email || !password || !confirmPassword) {
       Alert.alert('경고', '모든 정보를 입력해주세요.');
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      Alert.alert('경고', '올바른 이메일 형식을 입력해주세요.');
       return;
     }
 
