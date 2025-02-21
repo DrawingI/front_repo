@@ -16,8 +16,8 @@ const LoginScreen = () => {
 
       {/* Google 로그인 버튼 */}
       <TouchableOpacity style={tw`flex-row border border-gray-300 rounded-lg w-full py-4 px-4 items-center mb-4`}>
-        <Image source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg' }} style={tw`w-6 h-6 mr-3`} />
-        <Text style={tw`text-lg text-black`}>Google로 시작하기</Text>
+        <Image source={require('./assets/google_logo.png')} style={tw`w-6 h-6 mr-3`} />
+        <Text style={tw`absolute left-0 right-0 text-lg text-black text-center`}>Google로 시작하기</Text>
       </TouchableOpacity>
 
       {/* 또는 구분선 */}
