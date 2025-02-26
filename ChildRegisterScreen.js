@@ -20,7 +20,7 @@ const ChildRegisterScreen = ({ navigation }) => {
   const [relationship, setRelationship] = useState("보호자");
   const [image, setImage] = useState(null);
 
-  // 이미지 선택 함수
+  // ✅ 이미지 선택 함수
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -34,7 +34,7 @@ const ChildRegisterScreen = ({ navigation }) => {
     }
   };
 
-  // 생년월일 유효성 검사 함수
+  // ✅ 생년월일 유효성 검사 함수
   const isValidBirthdate = (date) => {
     if (date.length !== 6 || isNaN(date)) return false;
     const year = parseInt(date.substring(0, 2), 10);
@@ -43,7 +43,7 @@ const ChildRegisterScreen = ({ navigation }) => {
     return month >= 1 && month <= 12 && day >= 1 && day <= 31;
   };
 
-  // 등록 버튼 핸들러
+  // ✅ 아이 등록 핸들러
   const handleRegister = async () => {
     if (!name || !birthdate || !selectedGender) {
       Alert.alert("경고", "모든 정보를 입력해주세요.");
@@ -58,17 +58,17 @@ const ChildRegisterScreen = ({ navigation }) => {
     const newChild = { name, birthdate, gender: selectedGender, relationship, image };
 
     try {
-      // 기존 아이 목록 불러오기
+      // ✅ 기존 아이 목록 불러오기
       const storedChildren = await AsyncStorage.getItem("children");
       const childrenList = storedChildren ? JSON.parse(storedChildren) : [];
 
-      // 기존 목록에 새 아이 추가
+      // ✅ 새로운 아이 추가
       const updatedChildren = [...childrenList, newChild];
 
-      // AsyncStorage에 업데이트된 목록 저장
+      // ✅ AsyncStorage에 업데이트된 목록 저장
       await AsyncStorage.setItem("children", JSON.stringify(updatedChildren));
 
-      // ChildListScreen으로 이동하면서 최신 데이터 전달
+      // ✅ 등록 후 ChildList로 이동하며 최신 데이터 전달
       navigation.navigate("ChildList", { updatedChildren });
 
     } catch (error) {
@@ -77,7 +77,12 @@ const ChildRegisterScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-white px-6 justify-center`}>
+    <SafeAreaView style={tw`flex-1 bg-white px-6 py-6`}>
+      {/* 🔹 뒤로 가기 버튼 */}
+      <TouchableOpacity onPress={() => navigation.goBack()} style={tw`mb-4`}>
+        <Ionicons name="arrow-back" size={24} color="black" />
+      </TouchableOpacity>
+
       {/* 제목 */}
       <Text style={tw`text-2xl font-bold text-center mb-6`}>아이 등록하기</Text>
 

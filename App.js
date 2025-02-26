@@ -6,6 +6,7 @@ import SignUpScreen from './SignUpScreen';
 import ChildListScreen from './ChildListScreen';
 import ChildRegisterScreen from './ChildRegisterScreen';
 import TestHistoryScreen from './TestHistoryScreen';
+import ChildRetrieveScreen from "./ChildRetrieveScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -13,6 +14,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="ChildRetrieve" component={ChildRetrieveScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
         <Stack.Screen name="ChildList" component={ChildListScreen} />

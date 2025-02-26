@@ -18,12 +18,12 @@ import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 
 // 🔹 로컬 네트워크 서버 주소
-const LOCAL_SERVER_URL = 'http://172.30.1.94:5000'; // ← 확인한 IP 주소 사용
+const LOCAL_SERVER_URL = 'http://localhost:5000'; // ← 확인한 IP 주소 사용
 
 const SignUpScreen = ({ navigation }) => {
   const [isParent, setIsParent] = useState(true);
   const [profileImage, setProfileImage] = useState(null);
-  const [nickname, setNickname] = useState('');
+  const [username, setNickname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -50,7 +50,7 @@ const SignUpScreen = ({ navigation }) => {
 
   // 🔹 계정 만들기 버튼 클릭 시 API 요청
   const handleSignUp = async () => {
-    if (!nickname || !email || !password || !confirmPassword) {
+    if (!username || !email || !password || !confirmPassword) {
       Alert.alert('경고', '모든 정보를 입력해주세요.');
       return;
     }
@@ -61,13 +61,13 @@ const SignUpScreen = ({ navigation }) => {
     }
 
     try {
-      const response = await fetch(`${LOCAL_SERVER_URL}/signup`, {
+      const response = await fetch(`${LOCAL_SERVER_URL}/users/createUser`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          nickname,
+          username,
           email,
           password,
           role: isParent ? 'parent' : 'teacher',
@@ -78,7 +78,7 @@ const SignUpScreen = ({ navigation }) => {
 
       if (response.ok) {
         Alert.alert('회원가입 성공!', '이제 로그인해주세요.');
-        navigation.navigate('ChildList'); // 🔹 회원가입 성공 후 이동
+        navigation.navigate('Login'); // 🔹 회원가입 성공 후 이동
       } else {
         Alert.alert('회원가입 실패', data.message || '다시 시도해주세요.');
       }
@@ -172,7 +172,7 @@ const SignUpScreen = ({ navigation }) => {
               <TextInput
                 style={tw`w-full p-4 text-lg bg-gray-100 rounded-lg`}
                 placeholder="닉네임을 입력해주세요"
-                value={nickname}
+                value={username}
                 onChangeText={setNickname}
               />
             </View>
@@ -214,10 +214,10 @@ const SignUpScreen = ({ navigation }) => {
             <TouchableOpacity
               style={[
                 tw`w-full py-4 rounded-lg`,
-                nickname && email && password && confirmPassword ? { backgroundColor: '#F97316' } : tw`bg-gray-300`,
+                username && email && password && confirmPassword ? { backgroundColor: '#F97316' } : tw`bg-gray-300`,
               ]}
               onPress={handleSignUp}
-              disabled={!nickname || !email || !password || !confirmPassword}
+              disabled={!username || !email || !password || !confirmPassword}
             >
               <Text style={tw`text-center text-lg text-white`}>계정 만들기</Text>
             </TouchableOpacity>
