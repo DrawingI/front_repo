@@ -16,9 +16,8 @@ import {
 import tw from 'tailwind-react-native-classnames';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-
 // 🔹 로컬 네트워크 서버 주소
-const LOCAL_SERVER_URL = 'http://localhost:5000'; // ← 확인한 IP 주소 사용
+import {LOCAL_SERVER_URL} from '@env';
 
 const SignUpScreen = ({ navigation }) => {
   const [isParent, setIsParent] = useState(true);
