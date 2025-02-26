@@ -6,6 +6,9 @@ import tw from 'tailwind-react-native-classnames';
 import {LOCAL_SERVER_URL} from '@env';
 
 
+// 🔹 백엔드 서버 주소 (PC의 로컬 IP 사용)
+const LOCAL_SERVER_URL = 'http://localhost:5000';
+
 const LoginScreen = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
@@ -30,7 +33,7 @@ const LoginScreen = () => {
       const data = await response.json();
 
       if (response.ok) {
-        Alert.alert('로그인 성공!', 'ChildListScreen으로 이동합니다.');
+        Alert.alert('로그인 성공!');
         navigation.navigate('ChildList'); // 🔹 로그인 성공 시 페이지 이동
       } else {
         Alert.alert('로그인 실패', data.message || '이메일 또는 비밀번호가 일치하지 않습니다.');
