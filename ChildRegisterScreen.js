@@ -13,6 +13,9 @@ import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import tw from "tailwind-react-native-classnames";
 
+// ✅ 백엔드 API 주소
+const LOCAL_SERVER_URL = "http://localhost:5000";
+
 const ChildRegisterScreen = ({ navigation }) => {
   const [name, setName] = useState("");
   const [birthdate, setBirthdate] = useState("");
@@ -34,45 +37,49 @@ const ChildRegisterScreen = ({ navigation }) => {
     }
   };
 
-  // ✅ 생년월일 유효성 검사 함수
-  const isValidBirthdate = (date) => {
-    if (date.length !== 6 || isNaN(date)) return false;
-    const year = parseInt(date.substring(0, 2), 10);
-    const month = parseInt(date.substring(2, 4), 10);
-    const day = parseInt(date.substring(4, 6), 10);
-    return month >= 1 && month <= 12 && day >= 1 && day <= 31;
-  };
-
-  // ✅ 아이 등록 핸들러
+  // ✅ 아이 등록 API 호출
   const handleRegister = async () => {
     if (!name || !birthdate || !selectedGender) {
       Alert.alert("경고", "모든 정보를 입력해주세요.");
       return;
     }
 
-    if (!isValidBirthdate(birthdate)) {
-      Alert.alert("경고", "올바른 생년월일을 입력해주세요. (YYMMDD 형식)");
-      return;
-    }
-
-    const newChild = { name, birthdate, gender: selectedGender, relationship, image };
-
     try {
-      // ✅ 기존 아이 목록 불러오기
-      const storedChildren = await AsyncStorage.getItem("children");
-      const childrenList = storedChildren ? JSON.parse(storedChildren) : [];
+      const token = await AsyncStorage.getItem("token"); // ✅ 사용자 인증 토큰 가져오기
+      if (!token) {
+        Alert.alert("인증 오류", "로그인이 필요합니다.");
+        navigation.navigate("Login");
+        return;
+      }
 
-      // ✅ 새로운 아이 추가
-      const updatedChildren = [...childrenList, newChild];
+      const newChild = {
+        gender: selectedGender,
+        name,
+        birthdate,
+        relationship,
+        profImgUrl: image || "https://example.com/default-profile.png", // 기본 프로필 이미지 설정
+      };
 
-      // ✅ AsyncStorage에 업데이트된 목록 저장
-      await AsyncStorage.setItem("children", JSON.stringify(updatedChildren));
+      const response = await fetch(`${LOCAL_SERVER_URL}/child/createChild`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`, // ✅ 토큰 추가
+        },
+        body: JSON.stringify(newChild),
+      });
 
-      // ✅ 등록 후 ChildList로 이동하며 최신 데이터 전달
-      navigation.navigate("ChildList", { updatedChildren });
+      const data = await response.json();
 
+      if (response.ok) {
+        Alert.alert("등록 성공!", "아이 정보가 등록되었습니다.");
+        navigation.navigate("ChildList"); // ✅ 아이 리스트 화면으로 이동
+      } else {
+        Alert.alert("등록 실패", data.message || "아이 등록 중 오류 발생!");
+      }
     } catch (error) {
-      console.error("아이 저장 중 오류 발생:", error);
+      console.error("❌ 아이 등록 오류:", error);
+      Alert.alert("서버 오류", "서버에 연결할 수 없습니다.");
     }
   };
 
@@ -102,6 +109,7 @@ const ChildRegisterScreen = ({ navigation }) => {
       {/* 아이와의 관계 */}
       <Text style={tw`text-gray-700 text-lg mb-2`}>아이와의 관계</Text>
       <View style={tw`flex-row mb-4`}>
+        {/* 보호자 버튼 */}
         <TouchableOpacity
           style={[
             tw`px-6 py-3 rounded-lg border mr-2`,
@@ -109,8 +117,12 @@ const ChildRegisterScreen = ({ navigation }) => {
           ]}
           onPress={() => setRelationship("보호자")}
         >
-          <Text style={tw`text-lg ${relationship === "보호자" ? "text-yellow-600" : "text-gray-700"}`}>보호자</Text>
+          <Text style={tw`text-lg ${relationship === "보호자" ? "text-yellow-600" : "text-gray-700"}`}>
+            보호자
+          </Text>
         </TouchableOpacity>
+
+        {/* 선생님 버튼 */}
         <TouchableOpacity
           style={[
             tw`px-6 py-3 rounded-lg border`,
@@ -118,7 +130,9 @@ const ChildRegisterScreen = ({ navigation }) => {
           ]}
           onPress={() => setRelationship("선생님")}
         >
-          <Text style={tw`text-lg ${relationship === "선생님" ? "text-yellow-600" : "text-gray-700"}`}>선생님</Text>
+          <Text style={tw`text-lg ${relationship === "선생님" ? "text-yellow-600" : "text-gray-700"}`}>
+            선생님
+          </Text>
         </TouchableOpacity>
       </View>
 
