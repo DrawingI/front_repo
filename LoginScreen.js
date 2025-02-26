@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import tw from 'tailwind-react-native-classnames';
+// 🔹 백엔드 서버 주소 (PC의 로컬 IP 사용)
+import {LOCAL_SERVER_URL} from '@env';
+
 
 // 🔹 백엔드 서버 주소 (PC의 로컬 IP 사용)
 const LOCAL_SERVER_URL = 'http://localhost:5000';
