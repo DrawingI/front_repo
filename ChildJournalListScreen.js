@@ -116,9 +116,7 @@ const ChildJournalListScreen = ({ navigation, route }) => {
             tw`absolute bg-black rounded-full items-center justify-center`,
             { width: 56, height: 56, bottom: 100, right: 20 },
           ]}
-          onPress={() => {
-            // 새 일지 작성 화면 이동 or 모달 열기 등
-          }}
+          onPress={() => navigation.navigate("JournalWrite")}
         >
           <Ionicons name="add" size={24} color="#fff" />
         </TouchableOpacity>
