@@ -43,7 +43,7 @@ const ChildListScreen = ({ navigation }) => {
             <Ionicons name="home" size={24} color="black" />
             <Text style={tw`text-black font-bold text-xs mt-1`}>HTP</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={tw`items-center`}>
+          <TouchableOpacity style={tw`items-center`} onPress={() => navigation.navigate("Journal")}>
             <Ionicons name="calendar-outline" size={24} color="gray" />
             <Text style={tw`text-gray-500 text-xs mt-1`}>일지</Text>
           </TouchableOpacity>
