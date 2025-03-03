@@ -9,7 +9,8 @@ import TestHistoryScreen from "./TestHistoryScreen";
 import JournalScreen from "./JournalScreen";
 import ChildCalendarScreen from "./ChildCalendarScreen";
 import ChildJournalListScreen from "./ChildJournalListScreen";
-import JournalWriteScreen from "./JournalWriteScreen"; // 새로 만든 화면
+import JournalWriteScreen from "./JournalWriteScreen";
+import JournalDetailScreen from "./JournalDetailScreen"; // 추가
 
 const Stack = createNativeStackNavigator();
 
@@ -24,7 +25,8 @@ export default function App() {
         <Stack.Screen name="Journal" component={JournalScreen} />
         <Stack.Screen name="ChildCalendar" component={ChildCalendarScreen} />
         <Stack.Screen name="ChildJournalList" component={ChildJournalListScreen} />
-        <Stack.Screen name="JournalWrite" component={JournalWriteScreen} /> 
+        <Stack.Screen name="JournalWrite" component={JournalWriteScreen} />
+        <Stack.Screen name="JournalDetail" component={JournalDetailScreen} /> 
       </Stack.Navigator>
     </NavigationContainer>
   );

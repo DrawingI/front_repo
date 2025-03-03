@@ -12,7 +12,10 @@ import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import tw from 'tailwind-react-native-classnames';
 
-const JournalWriteScreen = ({ navigation }) => {
+const JournalWriteScreen = ({ navigation, route }) => {
+  // ChildJournalListScreen에서 넘겨준 onSave 콜백
+  const { onSave } = route.params || {};
+
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [images, setImages] = useState([]);
@@ -58,7 +61,12 @@ const JournalWriteScreen = ({ navigation }) => {
 
   // 완료 버튼
   const handleSubmit = () => {
-    // 저장 로직 등
+    // ChildJournalListScreen에서 받은 onSave 콜백이 있으면 호출
+    if (onSave) {
+      onSave(title, content);
+      // 현재 예시에서는 images는 넘기지 않았지만
+      // 필요하다면 onSave(title, content, images) 형태로 전달 가능
+    }
     navigation.goBack();
   };
 
@@ -78,12 +86,12 @@ const JournalWriteScreen = ({ navigation }) => {
           </TouchableOpacity>
           <Text style={tw`text-base font-bold`}>일지 작성</Text>
           <TouchableOpacity onPress={handleSubmit}>
-            <Text style={tw`text-orange-500`}>완료</Text>
+            <Text style={tw`text-black`}>완료</Text>
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* 스크롤 가능한 영역 (아래 여유 공간 pb-24) */}
+      {/* 스크롤 가능한 영역 */}
       <ScrollView contentContainerStyle={tw`px-4 pt-4 pb-24`}>
         {/* 제목 입력 */}
         <TextInput
@@ -131,7 +139,7 @@ const JournalWriteScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        {/* 선택된 이미지 목록 표시 (작게 + X 버튼) */}
+        {/* 선택된 이미지 목록 표시 (예: 50% 정사각형 + X 버튼) */}
         {images.map((uri, index) => (
           <View key={index} style={tw`relative mb-3 items-center`}>
             <Image
