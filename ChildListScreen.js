@@ -55,30 +55,33 @@ const ChildListScreen = ({ navigation, route }) => {
     }
   };
 
-  // 🔹 아이 공유 코드 생성 (추가된 부분)
   const fetchChildCode = async (childId) => {
     try {
-      const token = await AsyncStorage.getItem("token");
+      let token = await AsyncStorage.getItem("token");
+
+      // 🔹 저장된 토큰 확인
       if (!token) {
         Alert.alert("인증 오류", "로그인이 필요합니다.");
         navigation.navigate("Login");
         return;
       }
 
-      console.log("📌 Sending request to /child/getChildByToken");
+      console.log("📌 저장된 토큰 확인:", token);
+
+      // 🔹 API 요청 정보
+      console.log("📌 Sending request to /child/createChildToken");
       console.log("📌 token:", token);
       console.log("📌 childId:", childId);
 
-      const response = await fetch(`${LOCAL_SERVER_URL}/child/getChildByToken`, {
+      //
+      const response = await fetch(`${LOCAL_SERVER_URL}/child/createChildToken`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({
-          token: token,  // ✅ 일부 백엔드에서는 본문에도 토큰을 필요로 할 수 있음
-          childId: childId,  // ✅ 추가된 필드
-          relationship: "caretaker", // 또는 "teacher"
+          id: childId,  //
         }),
       });
 
@@ -86,7 +89,7 @@ const ChildListScreen = ({ navigation, route }) => {
       console.log("📌 Server Response:", data);
 
       if (response.ok) {
-        setChildCode(data.token);
+        setChildCode(data.token); //
         setModalVisible(true);
       } else {
         Alert.alert("코드 생성 실패", data.message || "아이 코드 생성 오류!");
@@ -96,12 +99,6 @@ const ChildListScreen = ({ navigation, route }) => {
       Alert.alert("서버 오류", "서버에 연결할 수 없습니다.");
     }
   };
-
-
-
-
-
-
 
   useEffect(() => {
     fetchChildren();
@@ -132,7 +129,7 @@ const ChildListScreen = ({ navigation, route }) => {
           <Text style={tw`text-gray-700`}>아이 등록하기</Text>
         </TouchableOpacity>
 
-        {/* 아이 불러오기 버튼 → `ChildRetrieveScreen.js`로 이동 */}
+        {/* 아이 불러오기 버튼 */}
         <TouchableOpacity
           style={tw`flex-row items-center justify-center border border-gray-300 py-3 px-4 rounded-lg`}
           onPress={() => navigation.navigate("ChildRetrieve")}
@@ -173,7 +170,7 @@ const ChildListScreen = ({ navigation, route }) => {
               <Text style={tw`text-white text-center text-lg`}>검사 시작하기</Text>
             </TouchableOpacity>
 
-            {/* 아이 옵션 모달 */}
+            {/* 아이 옵션 */}
             {selectedChild === item.id && (
               <View style={tw`absolute top-12 right-4 bg-white border rounded-lg p-2`}>
                 <TouchableOpacity onPress={() => fetchChildCode(item.id)}>
@@ -188,14 +185,17 @@ const ChildListScreen = ({ navigation, route }) => {
         )}
       />
 
-      {/* 공유 코드 모달 */}
+      {/* 공유 코드 나타내는 부분 */}
       {modalVisible && (
         <Modal transparent={true}>
-          <View style={tw`flex-1 justify-center items-center bg-black bg-opacity-50`}>
-            <View style={tw`bg-white p-6 rounded-lg`}>
-              <Text style={tw`text-lg font-bold mb-2`}>아이 공유 코드: {childCode}</Text>
-              <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <Text style={tw`text-blue-500`}>닫기</Text>
+          <View style={tw`flex-1 justify-center items-center bg-black bg-opacity-50 px-6`}>
+            <View style={tw`bg-white p-6 rounded-lg w-full max-w-sm`}>
+              <Text style={tw`text-lg font-bold mb-2`}>아이 공유 코드:</Text>
+              <Text style={tw`text-gray-800 text-center break-words`}>
+                {childCode}
+              </Text>
+              <TouchableOpacity onPress={() => setModalVisible(false)} style={tw`mt-4`}>
+                <Text style={tw`text-blue-500 text-center`}>닫기</Text>
               </TouchableOpacity>
             </View>
           </View>
