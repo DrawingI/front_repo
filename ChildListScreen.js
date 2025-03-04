@@ -179,6 +179,9 @@ const ChildListScreen = ({ navigation, route }) => {
                 <TouchableOpacity onPress={() => deleteChild(item.id)}>
                   <Text style={tw`p-2 text-red-500`}>아이 삭제</Text>
                 </TouchableOpacity>
+                <TouchableOpacity onPress={() => setSelectedChild(null)}>
+                  <Text style={tw`p-2 text-gray-500`}>닫기</Text>
+                </TouchableOpacity>
               </View>
             )}
           </View>
