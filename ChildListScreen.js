@@ -65,21 +65,28 @@ const ChildListScreen = ({ navigation, route }) => {
         return;
       }
 
-      const response = await fetch(`${LOCAL_SERVER_URL}/child/createChildToken`, {
+      console.log("📌 Sending request to /child/getChildByToken");
+      console.log("📌 token:", token);
+      console.log("📌 childId:", childId);
+
+      const response = await fetch(`${LOCAL_SERVER_URL}/child/getChildByToken`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({
-          childId: childId, // 아이 ID 포함
+          token: token,  // ✅ 일부 백엔드에서는 본문에도 토큰을 필요로 할 수 있음
+          childId: childId,  // ✅ 추가된 필드
           relationship: "caretaker", // 또는 "teacher"
         }),
       });
 
       const data = await response.json();
+      console.log("📌 Server Response:", data);
+
       if (response.ok) {
-        setChildCode(data.code);
+        setChildCode(data.token);
         setModalVisible(true);
       } else {
         Alert.alert("코드 생성 실패", data.message || "아이 코드 생성 오류!");
@@ -89,6 +96,12 @@ const ChildListScreen = ({ navigation, route }) => {
       Alert.alert("서버 오류", "서버에 연결할 수 없습니다.");
     }
   };
+
+
+
+
+
+
 
   useEffect(() => {
     fetchChildren();
