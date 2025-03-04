@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, SafeAreaView, Alert } from "react-native";
 import tw from "tailwind-react-native-classnames";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 const LOCAL_SERVER_URL = "http://localhost:5000";
 
@@ -17,19 +19,30 @@ const ChildRetrieveScreen = ({ navigation }) => {
               return;
           }
 
-          console.log("📌 Sending request to /child/getChildByToken");
-          console.log("📌 token:", childCode);
-          console.log("📌 relationship:", relationship);
+          // 🔹 로그인 세션 토큰 가져오기
+          const token = await AsyncStorage.getItem("token");
+          if (!token) {
+              Alert.alert("인증 오류", "로그인이 필요합니다.");
+              navigation.navigate("Login");
+              return;
+          }
+
+          console.log("📌 로그인 토큰:", token);
+          console.log("📌 아이 공유 코드:", childCode);
+          console.log("📌 관계 설정:", relationship);
 
           const response = await fetch(`${LOCAL_SERVER_URL}/child/getChildByToken`, {
               method: "POST",
               headers: {
                   "Content-Type": "application/json",
-                  "Authorization": `Bearer ${childCode}`, // 
+                  "Authorization": `Bearer ${token}`, // ✅ 로그인 세션 토큰을 올바르게 추가
               },
               body: JSON.stringify({
-                  token: childCode,  //
-                  relationship: relationship === "보호자" ? "caretaker" : "teacher",
+                  token: childCode,  // 🔹 입력한 아이 공유 코드
+                  relationship: {
+                      korean: relationship,  // "보호자" 또는 "선생님"
+                      english: relationship === "보호자" ? "caretaker" : "teacher" // "caretaker" 또는 "teacher"
+                  }
               }),
           });
 
@@ -47,7 +60,6 @@ const ChildRetrieveScreen = ({ navigation }) => {
           Alert.alert("서버 오류", "서버에 연결할 수 없습니다.");
       }
   };
-
 
   return (
     <SafeAreaView style={tw`flex-1 bg-white px-6 py-6`}>
