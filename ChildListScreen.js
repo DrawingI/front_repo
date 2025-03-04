@@ -55,72 +55,40 @@ const ChildListScreen = ({ navigation, route }) => {
     }
   };
 
-  // 🔹 아이 삭제 기능
-  const deleteChild = async (childId) => {
-    Alert.alert("삭제 확인", "정말 이 아이를 삭제하시겠습니까?", [
-      { text: "취소", style: "cancel" },
-      {
-        text: "삭제",
-        onPress: async () => {
-          try {
-            const token = await AsyncStorage.getItem("token");
-            const response = await fetch(`${LOCAL_SERVER_URL}/child/deleteChild/${childId}`, {
-              method: "DELETE",
-              headers: { "Authorization": `Bearer ${token}` },
-            });
+  // 🔹 아이 공유 코드 생성 (추가된 부분)
+  const fetchChildCode = async (childId) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        Alert.alert("인증 오류", "로그인이 필요합니다.");
+        navigation.navigate("Login");
+        return;
+      }
 
-            if (response.ok) {
-              Alert.alert("삭제 완료", "아이 정보가 삭제되었습니다.");
-              setChildren(children.filter((child) => child.id !== childId));
-            } else {
-              Alert.alert("삭제 실패", "아이 삭제 중 오류 발생!");
-            }
-          } catch (error) {
-            console.error("❌ 아이 삭제 오류:", error);
-            Alert.alert("서버 오류", "서버에 연결할 수 없습니다.");
-          }
+      const response = await fetch(`${LOCAL_SERVER_URL}/child/createChildToken`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
-      },
-    ]);
+        body: JSON.stringify({
+          childId: childId, // 아이 ID 포함
+          relationship: "caretaker", // 또는 "teacher"
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setChildCode(data.code);
+        setModalVisible(true);
+      } else {
+        Alert.alert("코드 생성 실패", data.message || "아이 코드 생성 오류!");
+      }
+    } catch (error) {
+      console.error("❌ 아이 코드 생성 오류:", error);
+      Alert.alert("서버 오류", "서버에 연결할 수 없습니다.");
+    }
   };
-
-  // 🔹 아이 코드 가져오기
- const fetchChildCode = async (childId) => {
-   try {
-     const token = await AsyncStorage.getItem("token");
-
-     if (!token) {
-       Alert.alert("인증 오류", "로그인이 필요합니다.");
-       navigation.navigate("Login");
-       return;
-     }
-
-     const response = await fetch(`${LOCAL_SERVER_URL}/child/createChildToken`, {
-       method: "POST",
-       headers: {
-         "Content-Type": "application/json",
-         "Authorization": `Bearer ${token}`, // ✅ 올바른 인증 토큰 포함
-       },
-       body: JSON.stringify({
-         token: token, // ✅ 요청 바디에도 토큰 포함
-         relationship: "caretaker", // 또는 "teacher"
-       }),
-     });
-
-     const data = await response.json();
-     if (response.ok) {
-       setChildCode(data.code);
-       setModalVisible(true);
-     } else {
-       Alert.alert("코드 가져오기 실패", data.message || "아이 코드 불러오기 오류!");
-     }
-   } catch (error) {
-     console.error("❌ 아이 코드 불러오기 오류:", error);
-     Alert.alert("서버 오류", "서버에 연결할 수 없습니다.");
-   }
- };
-
-
 
   useEffect(() => {
     fetchChildren();
@@ -142,6 +110,7 @@ const ChildListScreen = ({ navigation, route }) => {
 
       {/* 상단 버튼 */}
       <View style={tw`flex-row justify-around py-3 border-b border-gray-200 bg-gray-100`}>
+        {/* 아이 등록하기 버튼 */}
         <TouchableOpacity
           style={tw`flex-row items-center justify-center border border-gray-300 py-3 px-4 rounded-lg`}
           onPress={() => navigation.navigate("ChildRegister")}
@@ -150,9 +119,10 @@ const ChildListScreen = ({ navigation, route }) => {
           <Text style={tw`text-gray-700`}>아이 등록하기</Text>
         </TouchableOpacity>
 
+        {/* 아이 불러오기 버튼 → `ChildRetrieveScreen.js`로 이동 */}
         <TouchableOpacity
           style={tw`flex-row items-center justify-center border border-gray-300 py-3 px-4 rounded-lg`}
-          onPress={fetchChildren}
+          onPress={() => navigation.navigate("ChildRetrieve")}
         >
           <Ionicons name="download-outline" size={20} color="black" style={tw`mr-2`} />
           <Text style={tw`text-gray-700`}>아이 불러오기</Text>
@@ -194,7 +164,7 @@ const ChildListScreen = ({ navigation, route }) => {
             {selectedChild === item.id && (
               <View style={tw`absolute top-12 right-4 bg-white border rounded-lg p-2`}>
                 <TouchableOpacity onPress={() => fetchChildCode(item.id)}>
-                  <Text style={tw`p-2`}>아이 코드 부여</Text>
+                  <Text style={tw`p-2`}>아이 공유 코드 생성</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => deleteChild(item.id)}>
                   <Text style={tw`p-2 text-red-500`}>아이 삭제</Text>
@@ -205,12 +175,12 @@ const ChildListScreen = ({ navigation, route }) => {
         )}
       />
 
-      {/* 코드 표시 모달 */}
+      {/* 공유 코드 모달 */}
       {modalVisible && (
         <Modal transparent={true}>
           <View style={tw`flex-1 justify-center items-center bg-black bg-opacity-50`}>
             <View style={tw`bg-white p-6 rounded-lg`}>
-              <Text style={tw`text-lg font-bold mb-2`}>아이 코드: {childCode}</Text>
+              <Text style={tw`text-lg font-bold mb-2`}>아이 공유 코드: {childCode}</Text>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
                 <Text style={tw`text-blue-500`}>닫기</Text>
               </TouchableOpacity>
