@@ -25,10 +25,10 @@ const ChildRetrieveScreen = ({ navigation }) => {
               method: "POST",
               headers: {
                   "Content-Type": "application/json",
-                  "Authorization": `Bearer ${childCode}`, // ✅ 토큰을 헤더에 추가
+                  "Authorization": `Bearer ${childCode}`, // 
               },
               body: JSON.stringify({
-                  token: childCode,  // ✅ 필요하면 유지
+                  token: childCode,  //
                   relationship: relationship === "보호자" ? "caretaker" : "teacher",
               }),
           });
