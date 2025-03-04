@@ -12,14 +12,14 @@ import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import tw from "tailwind-react-native-classnames";
-// ✅ 백엔드 API 주소
-import {LOCAL_SERVER_URL} from '@env';
+
+const LOCAL_SERVER_URL = "http://localhost:5000"; // ✅ 환경변수 제거
 
 const ChildRegisterScreen = ({ navigation }) => {
   const [name, setName] = useState("");
   const [birthdate, setBirthdate] = useState("");
   const [selectedGender, setSelectedGender] = useState(null);
-  const [relationship, setRelationship] = useState("보호자");
+  const [relationship, setRelationship] = useState("caretaker");
   const [image, setImage] = useState(null);
 
   // ✅ 이미지 선택 함수
@@ -36,6 +36,12 @@ const ChildRegisterScreen = ({ navigation }) => {
     }
   };
 
+  // ✅ gender 변환 함수
+  const convertGender = (gender) => (gender === "여자" ? "female" : "male");
+
+  // ✅ relationship 변환 함수
+  const convertRelationship = (relation) => (relation === "보호자" ? "caretaker" : "teacher");
+
   // ✅ 아이 등록 API 호출
   const handleRegister = async () => {
     if (!name || !birthdate || !selectedGender) {
@@ -44,7 +50,7 @@ const ChildRegisterScreen = ({ navigation }) => {
     }
 
     try {
-      const token = await AsyncStorage.getItem("token"); // ✅ 사용자 인증 토큰 가져오기
+      const token = await AsyncStorage.getItem("token");
       if (!token) {
         Alert.alert("인증 오류", "로그인이 필요합니다.");
         navigation.navigate("Login");
@@ -52,18 +58,18 @@ const ChildRegisterScreen = ({ navigation }) => {
       }
 
       const newChild = {
-        gender: selectedGender,
+        gender: convertGender(selectedGender),
         name,
         birthdate,
-        relationship,
-        profImgUrl: image || "https://example.com/default-profile.png", // 기본 프로필 이미지 설정
+        relationship: convertRelationship(relationship),
+        profImgUrl: image || "https://example.com/default-profile.png",
       };
 
       const response = await fetch(`${LOCAL_SERVER_URL}/child/createChild`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`, // ✅ 토큰 추가
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify(newChild),
       });
@@ -72,7 +78,7 @@ const ChildRegisterScreen = ({ navigation }) => {
 
       if (response.ok) {
         Alert.alert("등록 성공!", "아이 정보가 등록되었습니다.");
-        navigation.navigate("ChildList"); // ✅ 아이 리스트 화면으로 이동
+        navigation.navigate("ChildList", { refresh: true }); // ✅ 자동 새로고침 트리거
       } else {
         Alert.alert("등록 실패", data.message || "아이 등록 중 오류 발생!");
       }
@@ -108,54 +114,44 @@ const ChildRegisterScreen = ({ navigation }) => {
       {/* 아이와의 관계 */}
       <Text style={tw`text-gray-700 text-lg mb-2`}>아이와의 관계</Text>
       <View style={tw`flex-row mb-4`}>
-        {/* 보호자 버튼 */}
         <TouchableOpacity
           style={[
             tw`px-6 py-3 rounded-lg border mr-2`,
-            relationship === "보호자" ? tw`border-yellow-500 bg-yellow-200` : tw`border-gray-300`,
+            relationship === "caretaker" ? tw`border-yellow-500 bg-yellow-200` : tw`border-gray-300`,
           ]}
-          onPress={() => setRelationship("보호자")}
+          onPress={() => setRelationship("caretaker")}
         >
-          <Text style={tw`text-lg ${relationship === "보호자" ? "text-yellow-600" : "text-gray-700"}`}>
-            보호자
-          </Text>
+          <Text style={tw`text-lg ${relationship === "caretaker" ? "text-yellow-600" : "text-gray-700"}`}>보호자</Text>
         </TouchableOpacity>
-
-        {/* 선생님 버튼 */}
         <TouchableOpacity
           style={[
             tw`px-6 py-3 rounded-lg border`,
-            relationship === "선생님" ? tw`border-yellow-500 bg-yellow-200` : tw`border-gray-300`,
+            relationship === "teacher" ? tw`border-yellow-500 bg-yellow-200` : tw`border-gray-300`,
           ]}
-          onPress={() => setRelationship("선생님")}
+          onPress={() => setRelationship("teacher")}
         >
-          <Text style={tw`text-lg ${relationship === "선생님" ? "text-yellow-600" : "text-gray-700"}`}>
-            선생님
-          </Text>
+          <Text style={tw`text-lg ${relationship === "teacher" ? "text-yellow-600" : "text-gray-700"}`}>선생님</Text>
         </TouchableOpacity>
       </View>
 
-      {/* 입력 필드 */}
-      <View style={tw`mb-4`}>
-        <Text style={tw`text-gray-700 text-lg mb-2`}>아이 이름</Text>
-        <TextInput
-          style={tw`border border-gray-300 p-4 rounded-lg text-lg`}
-          placeholder="아이 이름 입력"
-          value={name}
-          onChangeText={setName}
-        />
-      </View>
+      {/* 아이 이름 입력 */}
+      <Text style={tw`text-gray-700 text-lg mb-2`}>아이 이름</Text>
+      <TextInput
+        style={tw`border border-gray-300 p-4 rounded-lg text-lg`}
+        placeholder="아이 이름 입력"
+        value={name}
+        onChangeText={setName}
+      />
 
-      <View style={tw`mb-4`}>
-        <Text style={tw`text-gray-700 text-lg mb-2`}>생년월일 (YYMMDD)</Text>
-        <TextInput
-          style={tw`border border-gray-300 p-4 rounded-lg text-lg`}
-          placeholder="YYMMDD"
-          value={birthdate}
-          onChangeText={setBirthdate}
-          keyboardType="numeric"
-        />
-      </View>
+      {/* 생년월일 입력 */}
+      <Text style={tw`text-gray-700 text-lg mb-2`}>생년월일 (YYMMDD)</Text>
+      <TextInput
+        style={tw`border border-gray-300 p-4 rounded-lg text-lg`}
+        placeholder="YYMMDD"
+        value={birthdate}
+        onChangeText={setBirthdate}
+        keyboardType="numeric"
+      />
 
       {/* 성별 선택 */}
       <Text style={tw`text-gray-700 text-lg mb-2`}>성별</Text>

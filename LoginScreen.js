@@ -11,7 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage"; // ✅ 토큰 저장을 위한 AsyncStorage 추가
 import tw from "tailwind-react-native-classnames";
 // 🔹 백엔드 서버 주소 (PC의 로컬 IP 사용)
-import {LOCAL_SERVER_URL} from '@env';
+const LOCAL_SERVER_URL = "http://localhost:5000";
 
 const LoginScreen = () => {
   const navigation = useNavigation();
