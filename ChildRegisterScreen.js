@@ -13,7 +13,7 @@ import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import tw from "tailwind-react-native-classnames";
 
-const LOCAL_SERVER_URL = "http://localhost:5000"; // ✅ 환경변수 제거
+const LOCAL_SERVER_URL = "http://localhost:5000";
 
 const ChildRegisterScreen = ({ navigation }) => {
   const [name, setName] = useState("");
@@ -22,7 +22,7 @@ const ChildRegisterScreen = ({ navigation }) => {
   const [relationship, setRelationship] = useState("caretaker");
   const [image, setImage] = useState(null);
 
-  // ✅ 이미지 선택 함수
+  // 이미지 선택 함수
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -36,13 +36,13 @@ const ChildRegisterScreen = ({ navigation }) => {
     }
   };
 
-  // ✅ gender 변환 함수
+  // gender 변환 함수
   const convertGender = (gender) => (gender === "여자" ? "female" : "male");
 
-  // ✅ relationship 변환 함수
+  // relationship 변환 함수
   const convertRelationship = (relation) => (relation === "보호자" ? "caretaker" : "teacher");
 
-  // ✅ 아이 등록 API 호출
+  // 아이 등록 API 호출
   const handleRegister = async () => {
     if (!name || !birthdate || !selectedGender) {
       Alert.alert("경고", "모든 정보를 입력해주세요.");
@@ -90,7 +90,7 @@ const ChildRegisterScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={tw`flex-1 bg-white px-6 py-6`}>
-      {/* 🔹 뒤로 가기 버튼 */}
+      {/* 뒤로 가기 버튼 */}
       <TouchableOpacity onPress={() => navigation.goBack()} style={tw`mb-4`}>
         <Ionicons name="arrow-back" size={24} color="black" />
       </TouchableOpacity>

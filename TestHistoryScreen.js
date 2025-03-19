@@ -33,8 +33,11 @@ const TestHistoryScreen = ({ navigation }) => {
     <SafeAreaView style={tw`flex-1 bg-white`}>
       <View style={[tw`flex-1`, { paddingTop: StatusBar.currentHeight || 20 }]}>
 
-        {/* Header */}
+        {/* 헤더 */}
         <View style={tw`flex-row justify-between items-center px-6 py-4 border-b`}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+                      <Ionicons name="arrow-back" size={24} color="black" />
+            </TouchableOpacity>
           <Text style={tw`text-xl font-bold`}>검사 기록</Text>
           <View style={tw`flex-row items-center`}>
             <Ionicons name="notifications-outline" size={24} style={tw`mr-4`} />
@@ -84,7 +87,7 @@ const TestHistoryScreen = ({ navigation }) => {
           }
         />
 
-        {/* Bottom Navigation */}
+        {/* 하단 네비게이션 바 */}
         <View style={tw`flex-row justify-around py-3 border-t bg-white`}>
           <TouchableOpacity style={tw`items-center`}>
             <Ionicons name="document-text-outline" size={24} color="black" />
@@ -98,7 +101,7 @@ const TestHistoryScreen = ({ navigation }) => {
             <Ionicons name="calendar-outline" size={24} color="gray" />
             <Text style={tw`text-gray-500 text-xs mt-1`}>일지</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={tw`items-center`}>
+          <TouchableOpacity style={tw`items-center`} onPress={() => navigation.navigate("Communication")}>
             <Ionicons name="chatbubble-outline" size={24} color="gray" />
             <Text style={tw`text-gray-500 text-xs mt-1`}>소통</Text>
           </TouchableOpacity>

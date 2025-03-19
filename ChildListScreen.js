@@ -22,7 +22,7 @@ const ChildListScreen = ({ navigation, route }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [childCode, setChildCode] = useState("");
 
-  // 🔹 한국 나이 계산 함수
+  // 한국 나이 계산 함수
  const calculateKoreanAge = (birthdate) => {
      if (!birthdate) return "알 수 없음";
 
@@ -44,13 +44,13 @@ const ChildListScreen = ({ navigation, route }) => {
 
 
 
-  // 🔹 성별 변환 함수
+  // 성별 변환 함수
   const convertGender = (gender) => {
     return gender === "female" ? "여자" : "남자";
   };
 
 
-  // 🔹 아이 목록 불러오기
+  // 아이 목록 불러오기
   const fetchChildren = async () => {
     try {
       const token = await AsyncStorage.getItem("token");
@@ -80,7 +80,7 @@ const ChildListScreen = ({ navigation, route }) => {
     }
   };
 
-  // 🔹 아이 공유 코드 생성 함수
+  // 아이 공유 코드 생성 함수
   const fetchChildCode = async (childId) => {
     try {
       let token = await AsyncStorage.getItem("token");
@@ -114,7 +114,7 @@ const ChildListScreen = ({ navigation, route }) => {
     }
   };
 
-  // 🔹 아이 삭제 확인 팝업 (웹 & 모바일 대응)
+  // 아이 삭제 확인 팝업 (웹 & 모바일 대응)
   const confirmDeleteChild = (childId) => {
     if (Platform.OS === "web") {
       const isConfirmed = window.confirm("정말 삭제하시겠습니까?");
@@ -134,7 +134,7 @@ const ChildListScreen = ({ navigation, route }) => {
     }
   };
 
-  // 🔹 아이 삭제 함수
+  // 아이 삭제 함수
   const deleteChild = async (childId) => {
     try {
       const token = await AsyncStorage.getItem("token");
@@ -184,7 +184,7 @@ const ChildListScreen = ({ navigation, route }) => {
         </View>
       </View>
 
-      {/* ✅ 아이 등록하기 & 아이 불러오기 버튼  */}
+      {/* 아이 등록하기 & 아이 불러오기 버튼 */}
       <View style={tw`flex-row justify-around py-3 border-b border-gray-200 bg-gray-100`}>
         <TouchableOpacity
           style={tw`flex-row items-center justify-center border border-gray-300 py-3 px-4 rounded-lg`}
@@ -217,7 +217,7 @@ const ChildListScreen = ({ navigation, route }) => {
                   <Ionicons name="person-circle-outline" size={64} color="gray" style={tw`mr-4`} />
                 )}
                 <View>
-                  {/* ✅ 한국 나이 및 성별  */}
+                  {/* 한국 나이 및 성별  */}
                   <Text style={tw`text-gray-500 text-sm`}>
                     {calculateKoreanAge(item.birthdate)} / {convertGender(item.gender)}
                   </Text>
@@ -257,7 +257,7 @@ const ChildListScreen = ({ navigation, route }) => {
       />
 
 
-  {/* 공유 코드 모달 정상 작동  */}
+  {/* 공유 코드  */}
         {modalVisible && (
           <Modal transparent={true} visible={modalVisible} animationType="slide">
             <View style={tw`flex-1 justify-center items-center bg-black bg-opacity-50 px-6`}>
@@ -272,11 +272,11 @@ const ChildListScreen = ({ navigation, route }) => {
           </Modal>
         )}
 
-       {/* Bottom Navigation with Icons */}
+       {/* 하단 네비게이션 아이콘 */}
                                   <View style={tw`flex-row justify-around py-3 border-t bg-white`}>
                                     <TouchableOpacity style={tw`items-center`} onPress={() => navigation.navigate("TestHistory")}>
                                       <Ionicons name="document-text-outline" size={24} color="gray" />
-                                      <Text style={tw`text-gray-500 text-xs mt-1`}>검사 기록</Text>
+                                    <Text style={tw`text-gray-500 text-xs mt-1`}>검사 기록</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={tw`items-center`}>
                                       <Ionicons name="home" size={24} color="black" />
@@ -286,7 +286,7 @@ const ChildListScreen = ({ navigation, route }) => {
                                       <Ionicons name="calendar-outline" size={24} color="gray" />
                                       <Text style={tw`text-gray-500 text-xs mt-1`}>일지</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={tw`items-center`}>
+                                    <TouchableOpacity style={tw`items-center`} onPress={() => navigation.navigate("Communication")}>
                                       <Ionicons name="chatbubble-outline" size={24} color="gray" />
                                       <Text style={tw`text-gray-500 text-xs mt-1`}>소통</Text>
                                     </TouchableOpacity>

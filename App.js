@@ -7,6 +7,8 @@ import ChildListScreen from './ChildListScreen';
 import ChildRegisterScreen from './ChildRegisterScreen';
 import TestHistoryScreen from './TestHistoryScreen';
 import ChildRetrieveScreen from "./ChildRetrieveScreen";
+import CommunicationScreen from './CommunicationScreen';
+import MemberSelectionScreen from './MemberSelectionScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +22,8 @@ export default function App() {
         <Stack.Screen name="ChildList" component={ChildListScreen} />
         <Stack.Screen name="ChildRegister" component={ChildRegisterScreen} />
         <Stack.Screen name="TestHistory" component={TestHistoryScreen} />
+        <Stack.Screen name="Communication" component={CommunicationScreen} />
+        <Stack.Screen name="MemberSelection" component={MemberSelectionScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

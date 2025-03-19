@@ -11,7 +11,7 @@ const ChildRetrieveScreen = ({ navigation }) => {
   const [childCode, setChildCode] = useState("");
   const [childData, setChildData] = useState(null); // 🔹 불러온 아이 정보를 저장
 
-  // 🔹 아이 코드로 아이 정보 불러오기 함수
+  // 아이 코드로 아이 정보 불러오기 함수
   const fetchChildByCode = async () => {
       try {
           if (!childCode.trim()) {
@@ -19,7 +19,7 @@ const ChildRetrieveScreen = ({ navigation }) => {
               return;
           }
 
-          // 🔹 로그인 세션 토큰 가져오기
+          // 로그인 세션 토큰 가져오기
           const token = await AsyncStorage.getItem("token");
           if (!token) {
               Alert.alert("인증 오류", "로그인이 필요합니다.");
@@ -38,7 +38,7 @@ const ChildRetrieveScreen = ({ navigation }) => {
                   "Authorization": `Bearer ${token}`, // ✅ 로그인 세션 토큰을 올바르게 추가
               },
               body: JSON.stringify({
-                  token: childCode,  // 🔹 입력한 아이 공유 코드
+                  token: childCode,  // 입력한 아이 공유 코드
                   relationship: {
                       korean: relationship,  // "보호자" 또는 "선생님"
                       english: relationship === "보호자" ? "caretaker" : "teacher" // "caretaker" 또는 "teacher"

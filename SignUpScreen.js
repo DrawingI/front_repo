@@ -16,7 +16,6 @@ import {
 import tw from 'tailwind-react-native-classnames';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-// 🔹 로컬 네트워크 서버 주소
 import {LOCAL_SERVER_URL} from '@env';
 
 const SignUpScreen = ({ navigation }) => {
@@ -27,7 +26,7 @@ const SignUpScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  // 🔹 갤러리에서 이미지 선택
+  // 갤러리에서 이미지 선택
   const handleSelectImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
@@ -47,7 +46,7 @@ const SignUpScreen = ({ navigation }) => {
     }
   };
 
-  // 🔹 계정 만들기 버튼 클릭 시 API 요청
+  // 계정 만들기 버튼 클릭 시 API 요청
   const handleSignUp = async () => {
     if (!username || !email || !password || !confirmPassword) {
       Alert.alert('경고', '모든 정보를 입력해주세요.');
@@ -77,7 +76,7 @@ const SignUpScreen = ({ navigation }) => {
 
       if (response.ok) {
         Alert.alert('회원가입 성공!', '이제 로그인해주세요.');
-        navigation.navigate('Login'); // 🔹 회원가입 성공 후 이동
+        navigation.navigate('Login'); //회원가입 성공 후 이동
       } else {
         Alert.alert('회원가입 실패', data.message || '다시 시도해주세요.');
       }
@@ -101,7 +100,7 @@ const SignUpScreen = ({ navigation }) => {
               paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight + 10 : 0,
             }}
           >
-            {/* Profile Image */}
+            {/* 프로필 이미지 */}
             <View style={tw`items-center mb-6`}>
               <View
                 style={tw`w-32 h-32 rounded-full bg-gray-200 justify-center items-center overflow-hidden`}
@@ -165,7 +164,7 @@ const SignUpScreen = ({ navigation }) => {
               </TouchableOpacity>
             </View>
 
-            {/* Input Fields */}
+            {/* 입력 필드 */}
             <View style={tw`mb-4`}>
               <Text style={tw`text-black font-bold mb-1`}>닉네임</Text>
               <TextInput
@@ -209,7 +208,7 @@ const SignUpScreen = ({ navigation }) => {
               />
             </View>
 
-            {/* Sign-Up Button */}
+            {/* 로그인 버튼 */}
             <TouchableOpacity
               style={[
                 tw`w-full py-4 rounded-lg`,

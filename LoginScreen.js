@@ -18,7 +18,7 @@ const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // ✅ 로그인 API 요청 및 토큰 저장
+  // 로그인 API 요청 및 토큰 저장
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert("입력 오류", "이메일과 비밀번호를 입력해주세요.");
@@ -26,7 +26,7 @@ const LoginScreen = () => {
     }
 
     try {
-      // ✅ 백엔드 API 호출 (로그인)
+      // 백엔드 API 호출 (로그인)
       const response = await fetch(`${LOCAL_SERVER_URL}/login/`, {
         method: "POST",
         headers: {
@@ -40,10 +40,10 @@ const LoginScreen = () => {
       if (response.ok) {
         Alert.alert("로그인 성공!", "환영합니다 😊");
 
-        // ✅ 토큰 저장 (AsyncStorage에 저장)
+        //  토큰 저장 (AsyncStorage에 저장)
         await AsyncStorage.setItem("token", data.token);
 
-        // ✅ 로그인 성공 후 아이 목록 화면으로 이동
+        //  로그인 성공 후 아이 목록 화면으로 이동
         navigation.navigate("ChildList");
       } else {
         Alert.alert("로그인 실패", data.message || "이메일 또는 비밀번호가 일치하지 않습니다.");
