@@ -9,6 +9,7 @@ import TestHistoryScreen from './TestHistoryScreen';
 import ChildRetrieveScreen from "./ChildRetrieveScreen";
 import CommunicationScreen from './CommunicationScreen';
 import MemberSelectionScreen from './MemberSelectionScreen';
+import ChatRoomNameScreen from './ChatRoomNameScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,6 +25,7 @@ export default function App() {
         <Stack.Screen name="TestHistory" component={TestHistoryScreen} />
         <Stack.Screen name="Communication" component={CommunicationScreen} />
         <Stack.Screen name="MemberSelection" component={MemberSelectionScreen} />
+        <Stack.Screen name="ChatRoomName" component={ChatRoomNameScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

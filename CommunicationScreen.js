@@ -12,7 +12,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import tw from "tailwind-react-native-classnames";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect, useIsFocused } from "@react-navigation/native"; 
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 
 const LOCAL_SERVER_URL = "http://localhost:5000"; // 실제 서버 주소로 변경 필요
 

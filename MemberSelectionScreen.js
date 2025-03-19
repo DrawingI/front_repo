@@ -20,31 +20,37 @@ const MemberSelectionScreen = ({ route, navigation }) => {
   const [selectedMembers, setSelectedMembers] = useState([]); // 선택된 멤버
 
   // 보호자 및 선생님 목록 불러오기
-  const fetchMembers = async () => {
-    try {
-      const token = await AsyncStorage.getItem("token");
-      if (!token) {
-        Alert.alert("인증 오류", "로그인이 필요합니다.");
-        navigation.navigate("Login");
-        return;
-      }
-
-      const response = await fetch(`${LOCAL_SERVER_URL}/child/getMembers/${child.id}`, {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        setMembers(data.members);
-      } else {
-        Alert.alert("불러오기 실패", data.message || "멤버 목록을 불러오는 중 오류 발생!");
-      }
-    } catch (error) {
-      console.error("❌ 멤버 목록 불러오기 오류:", error);
-      Alert.alert("서버 오류", "서버에 연결할 수 없습니다.");
+const fetchMembers = async () => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    if (!token) {
+      Alert.alert("인증 오류", "로그인이 필요합니다.");
+      navigation.navigate("Login");
+      return;
     }
-  };
+
+    const response = await fetch(`${LOCAL_SERVER_URL}/chat/findUsersToChat`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        childid: child.id, // 현재 선택된 아이 ID 전송
+      }),
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      setMembers(data.members);
+    } else {
+      Alert.alert("불러오기 실패", data.message || "채팅 가능한 멤버 목록을 불러오는 중 오류 발생!");
+    }
+  } catch (error) {
+    console.error("❌ 멤버 목록 불러오기 오류:", error);
+    Alert.alert("서버 오류", "서버에 연결할 수 없습니다.");
+  }
+};
 
   useEffect(() => {
     fetchMembers();
@@ -59,6 +65,15 @@ const MemberSelectionScreen = ({ route, navigation }) => {
     }
   };
 
+  // ✅ "다음" 버튼 클릭 시 채팅방 이름 설정 화면으로 이동
+  const handleNext = () => {
+    if (selectedMembers.length === 0) {
+      Alert.alert("알림", "채팅방에 추가할 멤버를 선택해주세요.");
+      return;
+    }
+    navigation.navigate("ChatRoomName", { selectedMembers });
+  };
+
   return (
     <SafeAreaView style={tw`flex-1 bg-white`}>
       {/* 상단 헤더 */}
@@ -67,7 +82,7 @@ const MemberSelectionScreen = ({ route, navigation }) => {
           <Ionicons name="chevron-back" size={24} color="black" />
         </TouchableOpacity>
         <Text style={tw`text-xl font-bold`}>멤버 구성하기</Text>
-        <TouchableOpacity style={tw`ml-auto`} onPress={() => console.log("완료 버튼 클릭")}>
+        <TouchableOpacity style={tw`ml-auto`} onPress={handleNext}>
           <Text style={tw`text-blue-500 text-lg`}>다음</Text>
         </TouchableOpacity>
       </View>
@@ -120,14 +135,6 @@ const MemberSelectionScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         )}
       />
-
-      {/* 완료 버튼 */}
-      <TouchableOpacity
-        style={tw`bg-black py-3 mx-4 my-4 rounded-lg`}
-        onPress={() => console.log("완료 버튼 클릭")}
-      >
-        <Text style={tw`text-white text-center text-lg font-bold`}>완료</Text>
-      </TouchableOpacity>
     </SafeAreaView>
   );
 };
