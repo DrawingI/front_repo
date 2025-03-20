@@ -65,7 +65,7 @@ const fetchMembers = async () => {
     }
   };
 
-  // ✅ "다음" 버튼 클릭 시 채팅방 이름 설정 화면으로 이동
+  //"다음" 버튼 클릭 시 채팅방 이름 설정 화면으로 이동
   const handleNext = () => {
     if (selectedMembers.length === 0) {
       Alert.alert("알림", "채팅방에 추가할 멤버를 선택해주세요.");
