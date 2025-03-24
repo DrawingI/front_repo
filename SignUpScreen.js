@@ -16,7 +16,7 @@ import {
 import tw from 'tailwind-react-native-classnames';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import {LOCAL_SERVER_URL} from '@env';
+import { LOCAL_SERVER_URL } from '@env';
 
 const SignUpScreen = ({ navigation }) => {
   const [isParent, setIsParent] = useState(true);
@@ -100,6 +100,14 @@ const SignUpScreen = ({ navigation }) => {
               paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight + 10 : 0,
             }}
           >
+            {/* 상단 헤더 및 뒤로 가기 버튼 */}
+            <View style={tw`flex-row items-center justify-center mb-6 relative`}>
+              <TouchableOpacity onPress={() => navigation.goBack()} style={tw`absolute left-0`}>
+                <Ionicons name="chevron-back" size={28} color="black" />
+              </TouchableOpacity>
+              <Text style={tw`text-2xl font-bold`}>회원가입</Text>
+            </View>
+
             {/* 프로필 이미지 */}
             <View style={tw`items-center mb-6`}>
               <View
@@ -128,9 +136,7 @@ const SignUpScreen = ({ navigation }) => {
               <TouchableOpacity
                 style={[
                   tw`flex-1 py-3 rounded-lg items-center`,
-                  isParent
-                    ? { backgroundColor: '#F97316' }
-                    : tw`bg-gray-100`,
+                  isParent ? { backgroundColor: '#F97316' } : tw`bg-gray-100`,
                 ]}
                 onPress={() => setIsParent(true)}
               >
@@ -147,9 +153,7 @@ const SignUpScreen = ({ navigation }) => {
               <TouchableOpacity
                 style={[
                   tw`flex-1 py-3 rounded-lg items-center`,
-                  !isParent
-                    ? { backgroundColor: '#F97316' }
-                    : tw`bg-gray-100`,
+                  !isParent ? { backgroundColor: '#F97316' } : tw`bg-gray-100`,
                 ]}
                 onPress={() => setIsParent(false)}
               >
@@ -208,7 +212,7 @@ const SignUpScreen = ({ navigation }) => {
               />
             </View>
 
-            {/* 로그인 버튼 */}
+            {/* 계정 만들기 버튼 */}
             <TouchableOpacity
               style={[
                 tw`w-full py-4 rounded-lg`,

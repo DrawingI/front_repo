@@ -35,15 +35,12 @@ const ChildRetrieveScreen = ({ navigation }) => {
               method: "POST",
               headers: {
                   "Content-Type": "application/json",
-                  "Authorization": `Bearer ${token}`, // ✅ 로그인 세션 토큰을 올바르게 추가
+                  "Authorization": `Bearer ${token}`
               },
               body: JSON.stringify({
-                  token: childCode,  // 입력한 아이 공유 코드
-                  relationship: {
-                      korean: relationship,  // "보호자" 또는 "선생님"
-                      english: relationship === "보호자" ? "caretaker" : "teacher" // "caretaker" 또는 "teacher"
-                  }
-              }),
+                  token: childCode,
+                  relationship: relationship === "보호자" ? "caretaker" : "teacher"
+              })
           });
 
           const data = await response.json();
@@ -51,7 +48,7 @@ const ChildRetrieveScreen = ({ navigation }) => {
 
           if (response.ok) {
               setChildData(data.child);
-              Alert.alert("불러오기 성공", `${data.child.name} 아이 정보를 불러왔습니다.`);
+              Alert.alert("불러오기 성공");
           } else {
               Alert.alert("불러오기 실패", data.message || "아이 정보를 불러올 수 없습니다.");
           }

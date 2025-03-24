@@ -19,14 +19,14 @@ const LOCAL_SERVER_URL = "http://localhost:5000"; // 실제 서버 주소로 변
 const CommunicationScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [children, setChildren] = useState([]);
-  const isFocused = useIsFocused();  // 현재 화면 감지
+  const isFocused = useIsFocused();// 현재 화면 감지
+  const [chatRooms, setChatRooms] = useState([]);
 
   // HTP 클릭 시 이동
   const handleHTPNavigation = () => {
     navigation.replace("ChildList"); // HTP 화면을 강제로 새로고침하며 이동
   };
 
-  // 아이 목록 불러오기
   const fetchChildren = async () => {
     try {
       const token = await AsyncStorage.getItem("token");
@@ -53,10 +53,41 @@ const CommunicationScreen = ({ navigation }) => {
     }
   };
 
+  // 채팅방 목록 불러오기
+  const fetchChatRooms = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        Alert.alert("인증 오류", "로그인이 필요합니다.");
+        navigation.navigate("Login");
+        return;
+      }
+
+      const response = await fetch(`${LOCAL_SERVER_URL}/chat/findChats`, {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setChatRooms(data.chats); // 서버 응답 데이터에 맞게 수정 필요
+      } else {
+        Alert.alert("채팅방 불러오기 실패", data.message || "채팅방 목록을 불러오는 중 오류 발생!");
+      }
+    } catch (error) {
+      console.error("❌ 채팅방 불러오기 오류:", error);
+      Alert.alert("서버 오류", "서버에 연결할 수 없습니다.");
+    }
+  };
+
+
   // useFocusEffect: 화면이 다시 포커스될 때 상태를 업데이트
   useFocusEffect(
     React.useCallback(() => {
-      fetchChildren(); // 최신 아이 목록 불러오기
+      fetchChildren();   // 아이 목록 불러오기
+      fetchChatRooms();  // 채팅방 목록 불러오기
     }, [])
   );
 
@@ -75,13 +106,42 @@ const CommunicationScreen = ({ navigation }) => {
       </View>
 
       {/* 메인 컨텐츠 */}
-      <View style={tw`flex-1 justify-center items-center`}>
-        <Ionicons name="people-outline" size={80} color="gray" />
-        <Text style={tw`text-lg font-bold mt-4`}>지인들과 채팅해 보실래요?</Text>
-        <Text style={tw`text-gray-500 mt-2 text-center`}>
-          아이 정보를 공유하는 사람들과 {"\n"} 네트워킹 해보세요
-        </Text>
+      <View style={tw`flex-1`}>
+        {chatRooms && chatRooms.length > 0 ? (
+          <FlatList
+            data={chatRooms}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={tw`flex-row items-center justify-between p-4 border-b`}
+                onPress={() => navigation.navigate("ChatRoom", { chatId: item.id })}
+              >
+                <View style={tw`flex-row items-center`}>
+                  {item.profImgUrl ? (
+                    <Image source={{ uri: item.profImgUrl }} style={tw`w-12 h-12 rounded-full mr-3`} />
+                  ) : (
+                    <Ionicons name="person-circle-outline" size={48} color="gray" style={tw`mr-3`} />
+                  )}
+                  <View>
+                    <Text style={tw`text-lg font-bold`}>{item.name}</Text>
+                    <Text style={tw`text-gray-500`}>{item.lastMessage || "대화 없음"}</Text>
+                  </View>
+                </View>
+                <Text style={tw`text-gray-400 text-sm`}>{item.timestamp || "최근 활동 없음"}</Text>
+              </TouchableOpacity>
+            )}
+          />
+        ) : (
+          <View style={tw`flex-1 justify-center items-center`}>
+            <Ionicons name="people-outline" size={80} color="gray" />
+            <Text style={tw`text-lg font-bold mt-4`}>지인들과 채팅해 보실래요?</Text>
+            <Text style={tw`text-gray-500 mt-2 text-center`}>
+              아이 정보를 공유하는 사람들과 {"\n"} 네트워킹 해보세요
+            </Text>
+          </View>
+        )}
       </View>
+
 
       {/* 채팅 추가 버튼 */}
       <TouchableOpacity

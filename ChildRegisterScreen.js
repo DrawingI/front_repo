@@ -78,7 +78,7 @@ const ChildRegisterScreen = ({ navigation }) => {
 
       if (response.ok) {
         Alert.alert("등록 성공!", "아이 정보가 등록되었습니다.");
-        navigation.navigate("ChildList", { refresh: true }); // ✅ 자동 새로고침 트리거
+        navigation.navigate("ChildList", { refresh: true }); // 자동 새로고침 트리거
       } else {
         Alert.alert("등록 실패", data.message || "아이 등록 중 오류 발생!");
       }

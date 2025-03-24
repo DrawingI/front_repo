@@ -18,39 +18,59 @@ const MemberSelectionScreen = ({ route, navigation }) => {
   const { child } = route.params; // 이전 화면에서 넘겨받은 아이 정보
   const [members, setMembers] = useState([]);
   const [selectedMembers, setSelectedMembers] = useState([]); // 선택된 멤버
+  const [selectedChildId, setSelectedChildId] = useState(null);
 
   // 보호자 및 선생님 목록 불러오기
-const fetchMembers = async () => {
-  try {
-    const token = await AsyncStorage.getItem("token");
-    if (!token) {
-      Alert.alert("인증 오류", "로그인이 필요합니다.");
-      navigation.navigate("Login");
-      return;
-    }
+  const fetchMembers = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        Alert.alert("인증 오류", "로그인이 필요합니다.");
+        navigation.navigate("Login");
+        return;
+      }
 
-    const response = await fetch(`${LOCAL_SERVER_URL}/chat/findUsersToChat`, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        childid: child.id, // 현재 선택된 아이 ID 전송
-      }),
-    });
+      console.log("📌 토큰:", token); // 디버그용 로그
+      console.log("📌 아이 ID:", child.id); // 디버그용 로그
 
-    const data = await response.json();
-    if (response.ok) {
-      setMembers(data.members);
-    } else {
-      Alert.alert("불러오기 실패", data.message || "채팅 가능한 멤버 목록을 불러오는 중 오류 발생!");
+      const response = await fetch(`${LOCAL_SERVER_URL}/chat/findUsersToChat`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          childid: child.id, // 현재 선택된 아이 ID 전송
+        }),
+      });
+
+      const data = await response.json();
+      console.log("📌 서버 응답 데이터:", data);
+
+      if (response.ok) {
+        // userids가 배열인지 확인
+        if (Array.isArray(data.userids)) {
+          const formattedMembers = data.userids.map((user) => {
+            console.log("📌 유저 데이터:", user);
+            return {
+              id: user.id,
+              name: user.name || "이름 없음", // 이름이 없다면 기본값 설정
+              profImgUrl: user.profImgUrl || null, // 이미지 URL이 없는 경우
+              role: user.role || "역할 없음", // 역할 정보가 없는 경우
+            };
+          });
+          setMembers(formattedMembers);
+        } else {
+          Alert.alert("불러오기 실패", "채팅 가능한 멤버 목록이 없습니다.");
+        }
+      } else {
+        Alert.alert("불러오기 실패", data.message || "채팅 가능한 멤버 목록을 불러오는 중 오류 발생!");
+      }
+    } catch (error) {
+      console.error("❌ 멤버 목록 불러오기 오류:", error);
+      Alert.alert("서버 오류", "서버에 연결할 수 없습니다.");
     }
-  } catch (error) {
-    console.error("❌ 멤버 목록 불러오기 오류:", error);
-    Alert.alert("서버 오류", "서버에 연결할 수 없습니다.");
-  }
-};
+  };
 
   useEffect(() => {
     fetchMembers();
@@ -65,14 +85,18 @@ const fetchMembers = async () => {
     }
   };
 
-  //"다음" 버튼 클릭 시 채팅방 이름 설정 화면으로 이동
+  // "다음" 버튼 클릭 시 채팅방 이름 설정 화면으로 이동
   const handleNext = () => {
-    if (selectedMembers.length === 0) {
-      Alert.alert("알림", "채팅방에 추가할 멤버를 선택해주세요.");
-      return;
-    }
-    navigation.navigate("ChatRoomName", { selectedMembers });
+      if (selectedMembers.length === 0) {
+          Alert.alert("알림", "채팅방에 추가할 멤버를 선택해주세요.");
+          return;
+      }
+      navigation.navigate("ChatRoomName", {
+        selectedMembers: selectedMembers,
+        childId: selectedChildId
+      });
   };
+
 
   return (
     <SafeAreaView style={tw`flex-1 bg-white`}>

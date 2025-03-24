@@ -1,14 +1,17 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, SafeAreaView, Image, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, SafeAreaView, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import tw from "tailwind-react-native-classnames";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const LOCAL_SERVER_URL = "http://localhost:5000"; // 실제 서버 주소로 변경 필요
+const LOCAL_SERVER_URL = "http://localhost:5000";
 
 const ChatRoomNameScreen = ({ route, navigation }) => {
   const { selectedMembers, childId } = route.params; // 이전 화면에서 선택한 멤버 리스트와 아이 ID
   const [chatRoomName, setChatRoomName] = useState("");
+
+  console.log("📌 ChatRoomNameScreen - childId:", childId);
+  console.log("📌 ChatRoomNameScreen - selectedMembers:", selectedMembers);
 
   // 채팅방 만들기 함수
   const createChatRoom = async () => {
@@ -27,6 +30,9 @@ const ChatRoomNameScreen = ({ route, navigation }) => {
 
       // 선택된 멤버들의 ID 배열 생성
       const userIds = selectedMembers.map((member) => member.id);
+      console.log("📌 생성 요청 - chatRoomName:", chatRoomName);
+      console.log("📌 생성 요청 - childId:", childId);
+      console.log("📌 생성 요청 - userIds:", userIds);
 
       const response = await fetch(`${LOCAL_SERVER_URL}/chat/createChat`, {
         method: "POST",
@@ -36,15 +42,17 @@ const ChatRoomNameScreen = ({ route, navigation }) => {
         },
         body: JSON.stringify({
           name: chatRoomName,
-          childid: childId, // 아이 ID를 포함
-          userids: userIds, // 선택된 멤버 ID 목록
+          childid: childId,
+          userids: userIds,
         }),
       });
 
       const data = await response.json();
+      console.log("📌 서버 응답 데이터:", data);
+
       if (response.ok) {
         Alert.alert("채팅방 생성 성공", "채팅방이 성공적으로 생성되었습니다!");
-        navigation.navigate("Communication"); // 채팅 목록으로 이동
+        navigation.navigate("Communication");
       } else {
         Alert.alert("채팅방 생성 실패", data.message || "채팅방을 만들 수 없습니다.");
       }
