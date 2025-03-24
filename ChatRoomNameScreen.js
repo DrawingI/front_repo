@@ -52,7 +52,12 @@ const ChatRoomNameScreen = ({ route, navigation }) => {
 
       if (response.ok) {
         Alert.alert("채팅방 생성 성공", "채팅방이 성공적으로 생성되었습니다!");
-        navigation.navigate("Communication");
+        console.log("🔗 Communication으로 네비게이트");
+        // 채팅방 ID와 데이터를 함께 전달
+        navigation.navigate("Communication", {
+          chatId: data.chat.id,
+          chatName: chatRoomName,
+        });
       } else {
         Alert.alert("채팅방 생성 실패", data.message || "채팅방을 만들 수 없습니다.");
       }

@@ -26,6 +26,7 @@ export default function App() {
         <Stack.Screen name="Communication" component={CommunicationScreen} />
         <Stack.Screen name="MemberSelection" component={MemberSelectionScreen} />
         <Stack.Screen name="ChatRoomName" component={ChatRoomNameScreen} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
